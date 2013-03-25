@@ -47,5 +47,5 @@ Template.activefeed.afeed = function(){
    return Posts.find({feedid:Session.get("active_feed")});
 }
 Template.feed.selected = function(){
-    return Session.equals(Session.get("active_feed"), this._id) ? 'active':'';
+    return Session.get("active_feed") == this._id ? 'active':'';
 }

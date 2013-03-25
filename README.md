@@ -4,19 +4,19 @@ Fiids
 How to install/run
 ==================
 
-*Install Meteor
+* Install Meteor
 
 	curl https://install.meteor.com | /bin/sh
 
-*Create project
+* Create project
 
 	meteor create fiidsapp
 
-*Copy source
+* Copy source
 
 	cd fiidsapp
 	git clone https://github.com/xavo/fiids.git .
 
-*Run app
+* Run app
 
 	meteor

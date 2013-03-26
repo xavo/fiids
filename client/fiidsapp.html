@@ -75,14 +75,15 @@
         </div><!--/row-->
   </template>
   <template name="activefeed">
+      <button id="frem" class="btn pull-right"><i class="icon-trash"></i> Remove feed</button>
       {{#each afeed}}
         {{>post}}
       {{/each}}
   </template>
   <template name="post">
-      <div class="well">
+      <div class="well {{#if readed}}readed{{/if}}">
           <h2><a target="_blank" href="{{link}}">{{title}}</a></h2>
-          <h4>{{author}} - {{publishedDate}}</h4>
+          <h4>{{author}} - {{normaldate}}</h4>
           <p>
               {{{content}}}
           </p>
@@ -94,7 +95,7 @@
       {{/each}}
   </template>
   <template name="feed">
-       <li class="{{selected}}"><a href="#">{{feedname}} ({{countunread}})</a></li>
+      <li class="{{selected}}"><a href="#">{{feedname}} ({{countunread}}) </a> </li>
   </template>
   <template name="header">
       <div class="navbar navbar-inverse navbar-fixed-top">

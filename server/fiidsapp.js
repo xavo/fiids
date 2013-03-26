@@ -1,13 +1,20 @@
 var Feeds = new Meteor.Collection("feeds");
 var Posts = new Meteor.Collection("posts");
+var UserFeeds = new Meteor.Collection("userfeeds");
+var UserPosts = new Meteor.Collection("userposts");
 
 Meteor.startup(function () {
     console.log('Init');
     Meteor.publish('feeds', function(){
-        return Feeds.find({user:this.userId});
+        return Feeds.find({_id:{$in:_.pluck(UserFeeds.find({user:this.userId}).fetch(),'feedid')}});
     });
     Meteor.publish('posts', function(){
-       return Posts.find(); 
+       var uf = Feeds.find({_id:{$in:_.pluck(UserFeeds.find({user:this.userId}).fetch(),'feedid')}}).fetch();
+       var pk = _.pluck(uf, '_id');
+       return Posts.find({feedid:{$in:pk}}); 
+    });
+    Meteor.publish('userposts', function(){
+       return UserPosts.find({user:this.userId}); 
     });
 });
 
@@ -52,14 +59,17 @@ Meteor.methods({
                var entries = fd.entries;
                console.log('New feed: '+fd.title);
                var fid = Feeds.insert({
-                        user: this.userId,
                         feedurl: feedurl,
                         feedname: fd.title,
                         countunread:entries.length
                     });
+               UserFeeds.insert({
+                   feedid:fid,
+                   user: this.userId
+               })
                for(var i in entries){
                    var v = entries[i];
-                   Posts.insert({
+                   var idp = Posts.insert({
                        feedid: fid,
                        title: v.title,
                        link: v.link,
@@ -68,10 +78,23 @@ Meteor.methods({
                        contentSnippet: v.contentSnippet,
                        content: v.content,
                        categories: v.categories
-                   })
+                   });
+                   UserPosts.insert({
+                       postid: idp,
+                       user: this.userId,
+                       readed: false,
+                       favorite: false
+                   });
                }
+               
            }
        }
+   },
+   deletefeed: function(feedid){
+       /**
+        * TODO: When a feed is deleted, don't delete de feed, delete the relation to the user!!
+        */
+       Feeds.remove(feedid);
    }
 });
 
